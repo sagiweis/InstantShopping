@@ -7,44 +7,6 @@
     android:fitsSystemWindows="true"
     tools:context="com.dys.instantshopping.MyGroups">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/holo_blue_light"
-            app:popupTheme="@style/PopupOverlay">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="הקבוצות שלי"
-                    android:textSize="20sp"
-                    android:layout_alignBottom="@+id/toolbar_settings_button"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginRight="25px" />
-                <ImageButton
-                    android:id="@+id/toolbar_settings_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_settings_24dp"
-                    android:background="#00ffffff"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-            </RelativeLayout>
-
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_my_groups" />
 

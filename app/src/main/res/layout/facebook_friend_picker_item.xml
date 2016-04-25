@@ -3,14 +3,27 @@
     android:layout_height="match_parent"
     android:padding="10px">
 
-    <ImageView
-        android:layout_width="175px"
-        android:layout_height="175px"
-        android:id="@+id/facebookFriendPickerImageView" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="175px"
+            android:layout_height="175px"
+            android:id="@+id/facebookFriendPickerImageView"
+            android:padding="5px" />
+
+        <ImageView
+            android:src="@drawable/facebook_friend_picture_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/facebookFriendPickerCheckBox"
-        android:layout_marginTop="25px" />
+        android:layout_marginTop="40px" />
 </LinearLayout>

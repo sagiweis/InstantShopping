@@ -14,17 +14,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageButton
-            android:layout_width="450px"
-            android:layout_height="450px"
-            android:id="@+id/groupPictureButton"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/no_group_picture"
-            android:onClick="setGroupPicture"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            android:nestedScrollingEnabled="false" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageButton
+                android:layout_width="450px"
+                android:layout_height="450px"
+                android:id="@+id/groupPictureButton"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/no_group_picture"
+                android:onClick="setGroupPicture"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:padding="12px"
+                android:nestedScrollingEnabled="false" />
+
+            <ImageView
+                android:src="@drawable/group_image_frame_big"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -32,7 +46,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50px">
 
-        <TextView
+
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editText"
+            android:hint="שם הקבוצה"
+ />
+
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -40,61 +65,36 @@
             android:id="@+id/textView2"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/textView2"
-            android:layout_toStartOf="@+id/textView2"
-            android:layout_marginRight="20px" />
-
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="true" />-->
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="משתתפים"
-            android:id="@+id/textView3"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="250dp">
 
         <ListView
             android:layout_width="fill_parent"
-            android:layout_height="600px"
+            android:layout_height="fill_parent"
             android:id="@+id/participantsListView"
             android:background="#eeeeee"
-            android:layout_marginTop="20px"
-            android:layout_marginBottom="20px" />
+            android:layout_marginTop="20px" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="אישור"
             android:id="@+id/button"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:textColor="#ffffff"
+            android:background="@color/colorPrimary"
+            android:layout_alignParentTop="false"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
 </LinearLayout>
