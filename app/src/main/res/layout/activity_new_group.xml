@@ -15,12 +15,16 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:layout_width="350px"
-            android:layout_height="350px"
+            android:layout_width="450px"
+            android:layout_height="450px"
             android:id="@+id/groupPictureButton"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/no_group_picture" />
+            android:src="@drawable/no_group_picture"
+            android:onClick="setGroupPicture"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:nestedScrollingEnabled="false" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -71,9 +75,12 @@
         android:layout_height="wrap_content">
 
         <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/listView" />
+            android:layout_width="fill_parent"
+            android:layout_height="600px"
+            android:id="@+id/participantsListView"
+            android:background="#eeeeee"
+            android:layout_marginTop="20px"
+            android:layout_marginBottom="20px" />
     </RelativeLayout>
 
     <RelativeLayout
