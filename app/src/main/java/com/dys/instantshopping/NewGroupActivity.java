@@ -3,27 +3,47 @@ package com.dys.instantshopping;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
+import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.tasks.CreateGroupTask;
+import com.dys.instantshopping.utilities.ImageParser;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 
 public class NewGroupActivity extends AppCompatActivity {
 
@@ -36,6 +56,28 @@ public class NewGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_group);
         forceRTLIfSupported();
         populateFacebookFriendsList();
+    }
+
+    private void sendGroupToServer(Group group){
+        (new CreateGroupTask()).execute();
+    }
+
+    public void createGroup(View view){
+        String name = ((EditText)findViewById(R.id.newGroupName)).getText().toString();
+        Bitmap picture = ((BitmapDrawable)((ImageView)findViewById(R.id.groupPictureButton)).getDrawable()).getBitmap();
+        //String pictureBase64 = ImageParser.bitmapToBase64(picture);
+
+        String pictureBase64 = "";
+        List<String> participants = new ArrayList<String>();
+        for (FacebookFriendPickerModel currFriend : friends) {
+            if(currFriend.isSelected())
+                participants.add(currFriend.getId());
+        }
+
+        if(name != ""){
+            Group newGroup = new Group(name, pictureBase64, participants);
+            sendGroupToServer(newGroup);
+        }
     }
 
     public void setGroupPicture(View view){

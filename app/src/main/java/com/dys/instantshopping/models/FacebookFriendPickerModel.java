@@ -28,6 +28,10 @@ public class FacebookFriendPickerModel implements Comparable{
         return this.name;
     }
 
+    public String getId(){
+        return this.id;
+    }
+
     public String getImageURL(){
         return this.imageURL;
     }
