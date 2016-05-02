@@ -1,6 +1,8 @@
 package com.dys.instantshopping;
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
+import com.dys.instantshopping.fragments.GroupListFragment;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.objects.Group;
@@ -69,6 +72,35 @@ public class GroupActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (findViewById(R.id.fragment_container) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            Fragment firstFragment = new GroupListFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            firstFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.add(R.id.fragment_container, firstFragment).commit();
+        }
+    }
+
+    private void setFragment(Fragment fragment){
+        Fragment newFragment = new GroupListFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void prepareGroupInfo(){
