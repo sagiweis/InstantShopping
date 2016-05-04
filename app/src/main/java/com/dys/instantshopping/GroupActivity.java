@@ -19,12 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
 import com.dys.instantshopping.fragments.GroupListFragment;
-import com.dys.instantshopping.models.FacebookFriendPickerModel;
+import com.dys.instantshopping.fragments.ListsHistoryFragment;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.utilities.ImageDownloader;
@@ -35,8 +33,6 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
 import org.json.JSONException;
-
-import java.util.Collections;
 
 public class GroupActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -178,6 +174,10 @@ public class GroupActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+
+        if (id == R.id.nav_history){
+            setFragment(new ListsHistoryFragment());
+        }
 
        /* if (id == R.id.nav_camera) {
             // Handle the camera action
