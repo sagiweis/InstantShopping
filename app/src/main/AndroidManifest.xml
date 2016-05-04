@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dys.instantshopping">
-
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -21,11 +20,12 @@
         <activity
             android:name=".NewGroupActivity"
             android:label="יצירת קבוצה חדשה"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".MyGroups"
             android:label="הקבוצות שלי"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme">
+        </activity>
         <activity android:name=".StartupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,6 +55,11 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <activity
+            android:name=".GroupActivity"
+            android:label="@string/title_activity_group"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        
         <activity
             android:name=".MyListActivity"
             android:label="@string/title_activity_my_list"

@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/newGroupName"
             android:hint="שם הקבוצה"
  />
 
@@ -91,6 +91,7 @@
             android:text="אישור"
             android:id="@+id/button"
             android:textColor="#ffffff"
+            android:onClick="createGroup"
             android:background="@color/colorPrimary"
             android:layout_alignParentTop="false"
             android:layout_centerHorizontal="true"

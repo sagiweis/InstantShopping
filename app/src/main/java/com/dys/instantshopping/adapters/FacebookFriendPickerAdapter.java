@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import com.dys.instantshopping.R;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
+import com.dys.instantshopping.utilities.ImageDownloader;
 
 import java.io.InputStream;
 import java.util.List;
@@ -69,27 +70,5 @@ public class FacebookFriendPickerAdapter extends ArrayAdapter<FacebookFriendPick
     }
 
 
-    class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
 
-        public ImageDownloader(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap mIcon = null;
-            try {
-                InputStream in = new java.net.URL(url).openStream();
-                mIcon = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-            }
-            return mIcon;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
 }
