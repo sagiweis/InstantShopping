@@ -9,11 +9,17 @@ import java.util.List;
  */
 public class ShoppingList {
     private List<Product> ProductsList;
-    private Date ShopDate;
 
     public ShoppingList() {
         this.ProductsList = new ArrayList<Product>();
-        this.ShopDate = new Date();
+    }
+
+    public void addProduct(Product product){
+        this.ProductsList.add(product);
+    }
+
+    public List<Product> getProductsList(){
+        return this.ProductsList;
     }
 
 }
