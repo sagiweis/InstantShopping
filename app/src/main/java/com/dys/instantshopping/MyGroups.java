@@ -28,12 +28,15 @@ public class MyGroups extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent myIntent = new Intent(MyGroups.this, NewGroupActivity.class);
-                startActivity(myIntent);
-            }
+                @Override
+                public void onClick(View view) {
+                        Intent myIntent = new Intent(MyGroups.this, NewGroupActivity.class);
+                        startActivity(myIntent);
+                }
         });
+
+
+            final ArrayList<Group> myGroups = new ArrayList<Group>();
 
             String groupImageURL = "/9j/4AAQSkZJRgABAQEASABIAAD/4RdQRXhpZgAASUkqAAgAAAAEADEBAgAHAAAAPgAAADIBAgAU\n" +
                     "AAAARQAAADsBAgAHAAAAWQAAAGmHBAABAAAAYAAAAA4BAABQaWNhc2EAMjAxMzoxMjoyNCAyMDo0\n" +
@@ -808,19 +811,24 @@ public class MyGroups extends AppCompatActivity {
                     "nE0Z+DPzJ+G/Tx+m0+vp+B9E6/P6tv1Y6w+gGpwn57+x/Izl7n500+hox49/TwjNWcvoH4M/HmpP\n" +
                     "wv5+lr94f9Dz9F/+l0n/AGuvoJ+A/TOc2+Z+Wm33mkdM2m85mk5mk4TU9z8iGybIwb+I8z9s/wCp\n" +
                     "3D6T8yf/2Q==";
-        final ArrayList<Group> groups = new ArrayList<Group>();
-        groups.add(new Group("קבוצה אחת",groupImageURL,new ArrayList<String>()));
-        groups.add(new Group("קבוצה שתיים",groupImageURL,new ArrayList<String>()));
-        groups.add(new Group("קבוצה שלוש",groupImageURL,new ArrayList<String>()));
 
+            myGroups.add(new Group("דירת חברים", groupImageURL, new ArrayList<String>()));
+
+            ArrayList<Group> tempGroups = (ArrayList<Group>)AppCache.get("myGroups");
+            if(tempGroups != null){
+                    myGroups.clear();
+                    myGroups.addAll(tempGroups);
+            }
+
+            AppCache.put("myGroups", myGroups);
 
             GridView gridview = (GridView) findViewById(R.id.groupsGridView);
-        gridview.setAdapter(new ImageLabelAdapter(this,groups));
+        gridview.setAdapter(new ImageLabelAdapter(this,myGroups));
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                AppCache.put("currentGroup",groups.get(position));
+                AppCache.put("currentGroup",myGroups.get(position));
                 Intent myIntent = new Intent(MyGroups.this, GroupActivity.class);
                 startActivity(myIntent);
             }

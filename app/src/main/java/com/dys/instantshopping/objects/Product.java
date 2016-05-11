@@ -5,23 +5,17 @@ package com.dys.instantshopping.objects;
  */
 public class Product {
     private String Name;
-    private String Category;
     private double Amount;
     private String Description;
 
-    public Product(String name,String category,String description, double amount){
+    public Product(String name,String description, double amount){
         this.Name = name;
-        this.Category = category;
         this.Amount = amount;
         this.Description = description;
     }
 
     public String getName(){
         return this.Name;
-    }
-
-    public String getCategory(){
-        return this.Category;
     }
 
     public double getAmount(){

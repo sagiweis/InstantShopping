@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -30,6 +31,10 @@ public class ImageLabelAdapter extends BaseAdapter {
         list = l;
     }
 
+    public void updateGroups(ArrayList<Group> newList){
+        list = newList;
+    }
+
     public int getCount() {
         return list.size();
     }
@@ -44,7 +49,7 @@ public class ImageLabelAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        /*ImageView imageView;
         TextView label;
         LinearLayout layout;
         if (convertView == null) {
@@ -71,10 +76,23 @@ public class ImageLabelAdapter extends BaseAdapter {
 
         imageView.setImageBitmap(ImageParser.base64ToBitmap(list.get(position).getImageURL()));
 
-        label.setText(list.get(position).getName());
+        label.setText(list.get(position).getName());*/
 
 
 
-        return layout;
+
+
+
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null)
+            convertView = inflater.inflate(R.layout.my_groups_list_item, null, false);
+
+        TextView name = (TextView) convertView.findViewById(R.id.groupName);
+        ImageView image = (ImageView) convertView.findViewById(R.id.groupPicture);
+
+        name.setText(list.get(position).getName());
+        image.setImageBitmap(ImageParser.base64ToBitmap(list.get(position).getImageURL()));
+
+        return convertView;
     }
 }

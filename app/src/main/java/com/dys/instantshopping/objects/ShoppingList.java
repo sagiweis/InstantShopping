@@ -18,6 +18,12 @@ public class ShoppingList {
         this.ProductsList.add(product);
     }
 
+    public void editProduct(int index, Product product){
+        this.ProductsList.set(index,product);
+
+    }
+
+
     public List<Product> getProductsList(){
         return this.ProductsList;
     }

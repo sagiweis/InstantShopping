@@ -1,21 +1,19 @@
 package com.dys.instantshopping.adapters;
 
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dys.instantshopping.R;
-import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.fragments.AddEditProductFragment;
 import com.dys.instantshopping.objects.ShoppingList;
-import com.dys.instantshopping.utilities.ImageParser;
-
-import java.util.ArrayList;
 
 /**
  * Created by Sagi on 04/05/2016.
@@ -29,6 +27,9 @@ public class GroupListAdapter extends BaseAdapter {
         mContext = c;
         list = l;
     }
+public ShoppingList getShoppingList(){
+    return this.list;
+}
 
     @Override
     public int getCount() {
@@ -46,40 +47,30 @@ public class GroupListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        TextView productName;
-        TextView productAmount;
-        TextView productDescription;
-        Button editProductButton;
-        LinearLayout layout;
-        if (convertView == null) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null)
+            convertView = inflater.inflate(R.layout.group_list_row, null, false);
 
-            productName = new TextView(mContext);
-            productAmount = new TextView(mContext);
-            productDescription = new TextView(mContext);
-            editProductButton = new Button(mContext);
+        TextView name = (TextView) convertView.findViewById(R.id.productName);
+        TextView description = (TextView) convertView.findViewById(R.id.productDescription);
+        TextView amount = (TextView) convertView.findViewById(R.id.productAmount);
+        ImageButton editButton = (ImageButton) convertView.findViewById(R.id.productEdit);
 
-            layout = new LinearLayout(mContext);
-            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryLight));
-            layout.setPadding(5, 5, 5, 5);
-            layout.addView(productName);
-            layout.addView(productAmount);
-            layout.addView(productDescription);
-            layout.addView(editProductButton);
-        } else {
-            layout = (LinearLayout) convertView;
-            productName = (TextView) layout.getChildAt(0);
-            productAmount = (TextView) layout.getChildAt(1);
-            productDescription = (TextView) layout.getChildAt(2);
-            editProductButton = (Button) layout.getChildAt(3);
-        }
+        name.setText(list.getProductsList().get(position).getName());
+        description.setText(list.getProductsList().get(position).getDescription());
+        amount.setText(String.valueOf(list.getProductsList().get(position).getAmount()));
 
-        productName.setText(list.getProductsList().get(position).getName());
-        productAmount.setText(String.valueOf(list.getProductsList().get(position).getAmount()));
-        productDescription.setText(list.getProductsList().get(position).getDescription());
+        editButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                DialogFragment newFragment = new AddEditProductFragment();
+                Bundle args = new Bundle();
+                args.putInt("itemIndex", position);
+                newFragment.setArguments(args);
+                newFragment.show(((Activity) mContext).getFragmentManager(), "dialog");
+            }
+        });
 
-        return layout;
+        return convertView;
     }
 }

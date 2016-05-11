@@ -1,13 +1,13 @@
 package com.dys.instantshopping;
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
+import com.dys.instantshopping.fragments.AddEditProductFragment;
 import com.dys.instantshopping.fragments.GroupListFragment;
-import com.dys.instantshopping.models.FacebookFriendPickerModel;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.utilities.ImageDownloader;
@@ -35,8 +33,6 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
 import org.json.JSONException;
-
-import java.util.Collections;
 
 public class GroupActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,12 +51,12 @@ public class GroupActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addProductFab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DialogFragment newFragment = new AddEditProductFragment();
+                newFragment.show(getFragmentManager(), "dialog");
             }
         });
 

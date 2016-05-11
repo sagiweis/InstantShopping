@@ -17,8 +17,7 @@
         android:layout_height="fill_parent"
         android:id="@+id/groupsGridView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:numColumns="2"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="50px" />
+        android:verticalSpacing="10sp"
+        android:horizontalSpacing="10sp" />
 </RelativeLayout>

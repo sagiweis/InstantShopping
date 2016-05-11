@@ -21,6 +21,7 @@ import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
 import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.tasks.CreateGroupTask;
+import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.ImageParser;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -65,9 +66,9 @@ public class NewGroupActivity extends AppCompatActivity {
     public void createGroup(View view){
         String name = ((EditText)findViewById(R.id.newGroupName)).getText().toString();
         Bitmap picture = ((BitmapDrawable)((ImageView)findViewById(R.id.groupPictureButton)).getDrawable()).getBitmap();
-        //String pictureBase64 = ImageParser.bitmapToBase64(picture);
+        String pictureBase64 = ImageParser.bitmapToBase64(picture);
 
-        String pictureBase64 = "";
+        //String pictureBase64 = "";
         List<String> participants = new ArrayList<String>();
         for (FacebookFriendPickerModel currFriend : friends) {
             if(currFriend.isSelected())
@@ -76,7 +77,13 @@ public class NewGroupActivity extends AppCompatActivity {
 
         if(name != ""){
             Group newGroup = new Group(name, pictureBase64, participants);
-            sendGroupToServer(newGroup);
+            //sendGroupToServer(newGroup);
+            ArrayList<Group> myGroups = (ArrayList<Group>)AppCache.get("myGroups");
+            myGroups.add(newGroup);
+            AppCache.put("myGroups", myGroups);
+
+            Intent myIntent = new Intent(NewGroupActivity.this, MyGroups.class);
+            startActivity(myIntent);
         }
     }
 
