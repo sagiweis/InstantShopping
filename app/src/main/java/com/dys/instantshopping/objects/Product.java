@@ -8,8 +8,17 @@ public class Product {
     private String Category;
     private double Amount;
     private String Description;
+    private boolean isSelected;
 
-    public Product(String name,String category,String description, double amount){
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void toggleSelected() {
+        isSelected = !isSelected();
+    }
+
+    public Product(String name, String category, String description, double amount){
         this.Name = name;
         this.Category = category;
         this.Amount = amount;

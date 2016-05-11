@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,8 +22,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dys.instantshopping.fragments.ChooseMarketDialogFragment;
 import com.dys.instantshopping.fragments.GroupListFragment;
 import com.dys.instantshopping.fragments.ListsHistoryFragment;
+import com.dys.instantshopping.fragments.ShoppingListFragment;
+import com.dys.instantshopping.objects.Market;
+import com.dys.instantshopping.objects.ShoppingList;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.utilities.ImageDownloader;
@@ -35,7 +40,7 @@ import com.facebook.HttpMethod;
 import org.json.JSONException;
 
 public class GroupActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ChooseMarketDialogFragment.NoticeDialogListener {
 
     Group currentGroup;
 
@@ -92,9 +97,9 @@ public class GroupActivity extends AppCompatActivity
     }
 
     private void setFragment(Fragment fragment){
-        Fragment newFragment = new GroupListFragment();
+        //Fragment newFragment = new GroupListFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.replace(R.id.fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -177,6 +182,8 @@ public class GroupActivity extends AppCompatActivity
 
         if (id == R.id.nav_history){
             setFragment(new ListsHistoryFragment());
+        }else if(id == R.id.nav_go_shop){
+           setFragment(new ShoppingListFragment());
         }
 
        /* if (id == R.id.nav_camera) {
@@ -204,5 +211,17 @@ public class GroupActivity extends AppCompatActivity
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        ShoppingListFragment slf = new ShoppingListFragment();
+        slf.setMarket(((ChooseMarketDialogFragment)dialog).getMarket());
+        setFragment(slf);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
     }
 }

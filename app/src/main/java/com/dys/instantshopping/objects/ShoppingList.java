@@ -10,6 +10,25 @@ import java.util.List;
 public class ShoppingList {
     private List<Product> ProductsList;
 
+    public String getListDate() {
+        return ListDate;
+    }
+
+    public void setListDate(String listDate) {
+        ListDate = listDate;
+    }
+
+    public String getGroupName() {
+        return GroupName;
+    }
+
+    public void setGroupName(String groupName) {
+        GroupName = groupName;
+    }
+
+    private String ListDate;
+    private String GroupName;
+
     public ShoppingList() {
         this.ProductsList = new ArrayList<Product>();
     }
@@ -21,5 +40,7 @@ public class ShoppingList {
     public List<Product> getProductsList(){
         return this.ProductsList;
     }
+
+
 
 }
