@@ -7,7 +7,16 @@ public class Product {
     private String Name;
     private double Amount;
     private String Description;
+    private boolean isSelected;
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void toggleSelected() {
+        isSelected = !isSelected();
+    }
+    
     public Product(String name,String description, double amount){
         this.Name = name;
         this.Amount = amount;
