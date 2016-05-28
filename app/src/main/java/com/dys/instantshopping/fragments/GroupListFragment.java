@@ -1,7 +1,9 @@
 package com.dys.instantshopping.fragments;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,6 +37,16 @@ public class GroupListFragment extends Fragment {
         ListView listView = (ListView) fragmentView.findViewById(R.id.groupListView);
         ShoppingList groupList = new ShoppingList();
         listView.setAdapter(new GroupListAdapter(getActivity(), groupList));
+
+        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.addProductFab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new AddEditProductFragment();
+                newFragment.show(getFragmentManager(), "dialog");
+            }
+        });
+
         return fragmentView;
     }
 }

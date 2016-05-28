@@ -123,7 +123,7 @@ public class AddEditProductFragment extends DialogFragment {
                     products.add("נקניקיות");
                     products.add("בשר הודו טחון");
                 }
-
+                ((ArrayAdapter)productSpinner.getAdapter()).clear();
                 ((ArrayAdapter)productSpinner.getAdapter()).addAll(products);
             }
 
@@ -151,10 +151,17 @@ public class AddEditProductFragment extends DialogFragment {
                         if (amount.compareTo("") != 0)
                             amountAsDouble = Double.parseDouble(amount);
 
-                        if(index > -1)
-                            listAdapter.getShoppingList().editProduct(index,new Product(name, description, amountAsDouble));
-                        else
+
+                        if(index > -1){
+                            if(amountAsDouble == 0.0)
+                                listAdapter.getShoppingList().removeProduct(index);
+                            else
+                                listAdapter.getShoppingList().editProduct(index, new Product(name, description, amountAsDouble));
+                        }
+                        else{
                             listAdapter.getShoppingList().addProduct(new Product(name, description, amountAsDouble));
+
+                        }
                         listAdapter.notifyDataSetChanged();
                     }
                 }

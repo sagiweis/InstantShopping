@@ -38,7 +38,12 @@ public class ShoppingList {
     }
 
     public void editProduct(int index, Product product){
-        this.ProductsList.set(index,product);
+        this.ProductsList.set(index, product);
+
+    }
+
+    public void removeProduct(int index){
+        this.ProductsList.remove(index);
 
     }
 

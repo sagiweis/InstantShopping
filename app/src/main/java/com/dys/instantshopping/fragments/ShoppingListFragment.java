@@ -18,11 +18,12 @@ import com.dys.instantshopping.adapters.ShoppingListAdapter;
 import com.dys.instantshopping.objects.Market;
 import com.dys.instantshopping.objects.Product;
 import com.dys.instantshopping.objects.ShoppingList;
+import com.dys.instantshopping.utilities.AppCache;
 
 /**
  * Created by Dor Albagly on 5/5/2016.
  */
-public class ShoppingListFragment extends Fragment implements ChooseMarketDialogFragment.ChooseMarketDialogListener {
+public class ShoppingListFragment extends Fragment {
 
     ListView listView;
     Market market;
@@ -35,18 +36,23 @@ public class ShoppingListFragment extends Fragment implements ChooseMarketDialog
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final Activity context = getActivity();
-        new ChooseMarketDialogFragment().show(((FragmentActivity)context).getSupportFragmentManager(), "בחר סופר");
-
+        market = (Market) AppCache.get("selectedMarket");
         context.setTitle("רשימת הקניות שלי");
         View v = inflater.inflate(R.layout.fragment_shopping_list, container, false);
 
         ShoppingList lst3 = new ShoppingList();
-        lst3.addProduct(new Product("apple", "fruits", "Just red apples", 12));
-        lst3.addProduct(new Product("חלב", "מוצרי חלב", "3%", 2));
-        lst3.addProduct(new Product("בטטה", "ירקות", "גדולות", 5));
-        lst3.addProduct(new Product("סבון", "מוצרי טיפוח", "סבון Dove", 2));
         lst3.setGroupName("Retro");
         lst3.setListDate("2.5.2016");
+
+        if(market.getName() == "שופרסל") {
+            lst3.addProduct(new Product("חלב", "3%", 2));
+            lst3.addProduct(new Product("דובדבן", "", 5));
+            lst3.addProduct(new Product("תפוח עץ", "אדום", 2));
+        }else{
+            lst3.addProduct(new Product("תפוח עץ", "אדום", 2));
+            lst3.addProduct(new Product("דובדבן", "", 5));
+            lst3.addProduct(new Product("חלב", "3%", 2));
+        }
 
         listView = (ListView) v.findViewById(R.id.slistView);
         listView.setAdapter(new ShoppingListAdapter(context, lst3));
@@ -65,10 +71,5 @@ public class ShoppingListFragment extends Fragment implements ChooseMarketDialog
         });*/
 
         return v;
-    }
-
-    @Override
-    public void onFinishChooseMarketDialog(Market market) {
-        this.market = market;
     }
 }

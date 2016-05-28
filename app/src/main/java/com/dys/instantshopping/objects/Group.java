@@ -31,4 +31,9 @@ public class Group {
     public String getName(){
         return this.Name;
     }
+
+    public List<String> getParticipents(){
+        return this.Participents;
+    }
+
 }

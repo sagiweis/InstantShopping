@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
 import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.tasks.CreateGroupTask;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.ImageParser;
@@ -27,6 +28,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewGroupActivity extends AppCompatActivity {
 
@@ -81,6 +86,13 @@ public class NewGroupActivity extends AppCompatActivity {
             ArrayList<Group> myGroups = (ArrayList<Group>)AppCache.get("myGroups");
             myGroups.add(newGroup);
             AppCache.put("myGroups", myGroups);
+
+            /*Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://192.168.0.104:31427/")
+                    .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()))
+                    .build();
+            GroupController groupApi = retrofit.create(GroupController.class);
+            groupApi.AddGroup(newGroup.getName(),newGroup.getImageURL(),newGroup.getParticipents());*/
 
             Intent myIntent = new Intent(NewGroupActivity.this, MyGroups.class);
             startActivity(myIntent);

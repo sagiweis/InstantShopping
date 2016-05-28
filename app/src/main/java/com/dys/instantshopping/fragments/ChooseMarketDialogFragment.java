@@ -21,14 +21,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dys.instantshopping.Comparators.MarketDistanceComparator;
+import com.dys.instantshopping.GroupActivity;
 import com.dys.instantshopping.R;
+import com.dys.instantshopping.adapters.GroupListAdapter;
 import com.dys.instantshopping.adapters.MarketSpinnerAdapter;
 import com.dys.instantshopping.objects.Market;
+import com.dys.instantshopping.utilities.AppCache;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,14 +43,11 @@ import java.util.List;
 /**
  * Created by Dor Albagly on 5/9/2016.
  */
-public class ChooseMarketDialogFragment extends DialogFragment implements Spinner.OnItemSelectedListener {
+public class ChooseMarketDialogFragment extends DialogFragment {
 
-    private Market chosenMarket;
     ArrayList<Market> mlist;
-    ChooseMarketDialogFragment mHost = (ChooseMarketDialogFragment)getTargetFragment();
-
-    public Market getMarket(){
-        return this.chosenMarket;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class ChooseMarketDialogFragment extends DialogFragment implements Spinne
         View view = inflater.inflate(R.layout.choose_market_dialog, null);
         Spinner spinner = (Spinner) view.findViewById(R.id.marketSpinner);
         spinner.setAdapter(new MarketSpinnerAdapter(context, R.id.marketSpinner, list, l));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -86,7 +88,7 @@ public class ChooseMarketDialogFragment extends DialogFragment implements Spinne
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
+        });*/
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)
@@ -94,6 +96,12 @@ public class ChooseMarketDialogFragment extends DialogFragment implements Spinne
                 .setPositiveButton("בחר", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        Spinner spinner = ((Spinner) ((AlertDialog) dialog).findViewById(R.id.marketSpinner));
+                        Market selectedMarket = (Market)spinner.getSelectedItem();
+                        AppCache.put("selectedMarket", selectedMarket);
+
+                        ((GroupActivity)getActivity()).setFragment(new ShoppingListFragment());
+
                         //chosenMarket = (Market) ((Spinner)getActivity().findViewById(R.id.marketSpinner)).getSelectedItem();
                         //ChooseMarketDialogListener activity = (ChooseMarketDialogListener) getActivity();
                         //activity.onFinishChooseMarketDialog(chosenMarket);
@@ -101,7 +109,7 @@ public class ChooseMarketDialogFragment extends DialogFragment implements Spinne
                 }).setNegativeButton("בטל", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        dialog.dismiss();
                     }
         });
         //builder.setAdapter(new MarketSpinnerAdapter(context, R.id.marketSpinner, list, l));
@@ -109,51 +117,6 @@ public class ChooseMarketDialogFragment extends DialogFragment implements Spinne
 
     }
 
-    /* The activity that creates an instance of this dialog fragment must
-     * implement this interface in order to receive event callbacks.
-     * Each method passes the DialogFragment in case the host needs to query it. */
-    public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
-    }
-
-    // Use this instance of the interface to deliver action events
-    NoticeDialogListener mListener;
-
-    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // Verify that the host activity implements the callback interface
-        try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (NoticeDialogListener) activity;
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.toString()
-                    + " must implement NoticeDialogListener");
-        }
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (EditorInfo.IME_ACTION_DONE == id) {
-            // Return input text to activity
-            this.chosenMarket = mlist.get(position);
-            ChooseMarketDialogListener activity = (ChooseMarketDialogListener) getActivity();
-            activity.onFinishChooseMarketDialog(this.chosenMarket);
-            this.dismiss();
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    public interface ChooseMarketDialogListener {
-        void onFinishChooseMarketDialog(Market market);
-    }
 
     /*@Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

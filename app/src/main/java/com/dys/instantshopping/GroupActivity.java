@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,7 +45,7 @@ import com.facebook.HttpMethod;
 import org.json.JSONException;
 
 public class GroupActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ChooseMarketDialogFragment.NoticeDialogListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     Group currentGroup;
 
@@ -60,14 +61,7 @@ public class GroupActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addProductFab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment newFragment = new AddEditProductFragment();
-                newFragment.show(getFragmentManager(), "dialog");
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,7 +94,7 @@ public class GroupActivity extends AppCompatActivity
         }
     }
 
-    private void setFragment(Fragment fragment){
+    public void setFragment(Fragment fragment){
         //Fragment newFragment = new GroupListFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
@@ -187,7 +181,9 @@ public class GroupActivity extends AppCompatActivity
         if (id == R.id.nav_history){
             setFragment(new ListsHistoryFragment());
         }else if(id == R.id.nav_go_shop){
-           setFragment(new ShoppingListFragment());
+            new ChooseMarketDialogFragment().show(getSupportFragmentManager(), "בחר סופר");
+        }else if(id == R.id.nav_group_list){
+            setFragment(new GroupListFragment());
         }
 
        /* if (id == R.id.nav_camera) {
@@ -215,17 +211,5 @@ public class GroupActivity extends AppCompatActivity
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        ShoppingListFragment slf = new ShoppingListFragment();
-        slf.setMarket(((ChooseMarketDialogFragment)dialog).getMarket());
-        setFragment(slf);
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        dialog.dismiss();
     }
 }

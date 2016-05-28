@@ -36,23 +36,23 @@ public class ListsHistoryFragment extends Fragment{
         context.setTitle("הרשימות הישנות שלי");
 
         ShoppingList lst1 = new ShoppingList();
-        lst1.addProduct(new Product("apple", "fruits", "Just red apples", 12));
-        lst1.addProduct(new Product("חלב", "מוצרי חלב", "3%", 2));
+        lst1.addProduct(new Product("apple","Just red apples", 12));
+        lst1.addProduct(new Product("חלב",  "3%", 2));
         lst1.setGroupName("Retro");
         lst1.setListDate("29.4.2016");
 
         ShoppingList lst2 = new ShoppingList();
-        lst2.addProduct(new Product("עגבניה", "ירקות", "", 5));
-        lst2.addProduct(new Product("בטטה", "ירקות", "גדולות", 5));
-        lst2.addProduct(new Product("חלב", "מוצרי חלב", "3%", 2));
+        lst2.addProduct(new Product("עגבניה", "", 5));
+        lst2.addProduct(new Product("בטטה", "גדולות", 5));
+        lst2.addProduct(new Product("חלב",  "3%", 2));
         lst2.setGroupName("Retro");
         lst2.setListDate("21.4.2016");
 
         ShoppingList lst3 = new ShoppingList();
-        lst3.addProduct(new Product("apple", "fruits", "Just red apples", 12));
-        lst3.addProduct(new Product("חלב", "מוצרי חלב", "3%", 2));
-        lst3.addProduct(new Product("בטטה", "ירקות", "גדולות", 5));
-        lst3.addProduct(new Product("סבון", "מוצרי טיפוח", "סבון Dove", 2));
+        lst3.addProduct(new Product("apple","Just red apples", 12));
+        lst3.addProduct(new Product("חלב",  "3%", 2));
+        lst3.addProduct(new Product("בטטה",  "גדולות", 5));
+        lst3.addProduct(new Product("סבון", "סבון Dove", 2));
         lst3.setGroupName("Retro");
         lst3.setListDate("2.5.2016");
 
@@ -65,7 +65,7 @@ public class ListsHistoryFragment extends Fragment{
         expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
         expandableListAdapter = new ListsHistoryExpandableListAdapter(context, expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
-        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        /*expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -100,7 +100,7 @@ public class ListsHistoryFragment extends Fragment{
                 ).show();
                 return false;
             }
-        });
+        });*/
 
         return v;
 
