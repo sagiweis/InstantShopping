@@ -79,6 +79,7 @@ public class MarketSpinnerAdapter extends ArrayAdapter<Market> {
         TextView expandedListTextView2 = (TextView) convertView
                 .findViewById(R.id.marketDistance);
         expandedListTextView2.setText((Float.toString(expandedListText.getDistance(currentLocation))));
+        expandedListTextView2.setText("");
 
         return convertView;
     }

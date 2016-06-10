@@ -10,6 +10,7 @@ import java.util.List;
  * Created by Sagi on 26/04/2016.
  */
 public class Group {
+    private String Id;
     private String Name;
     private String ImageURL;
     private List<String> Participents;
@@ -30,6 +31,10 @@ public class Group {
 
     public String getName(){
         return this.Name;
+    }
+
+    public String getId(){
+        return this.Id;
     }
 
     public List<String> getParticipents(){

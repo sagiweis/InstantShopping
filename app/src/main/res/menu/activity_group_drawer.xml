@@ -26,10 +26,10 @@
 
     <item android:title="כללי">
         <menu>
-            <item
+            <!--<item
                 android:id="@+id/nav_app_settings"
                 android:icon="@drawable/ic_settings_24dp"
-                android:title="הגדרות" />
+                android:title="הגדרות" />-->
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"

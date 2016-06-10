@@ -3,6 +3,7 @@ package com.dys.instantshopping.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.utilities.ImageParser;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Sagi on 20/04/2016.
@@ -49,44 +51,13 @@ public class ImageLabelAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        /*ImageView imageView;
-        TextView label;
-        LinearLayout layout;
-        if (convertView == null) {
-            // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(350, 350));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
-
-            label = new TextView(mContext);
-
-            layout = new LinearLayout(mContext);
-            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryLight));
-            layout.setPadding(25,25,25,25);
-            layout.addView(imageView);
-            layout.addView(label);
-        } else {
-            layout = (LinearLayout) convertView;
-            imageView = (ImageView) layout.getChildAt(0);
-            label = (TextView) layout.getChildAt(1);
-        }
-
-        imageView.setImageBitmap(ImageParser.base64ToBitmap(list.get(position).getImageURL()));
-
-        label.setText(list.get(position).getName());*/
-
-
-
-
 
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.my_groups_list_item, null, false);
 
+        LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.groupListLayout);
         TextView name = (TextView) convertView.findViewById(R.id.groupName);
         ImageView image = (ImageView) convertView.findViewById(R.id.groupPicture);
 

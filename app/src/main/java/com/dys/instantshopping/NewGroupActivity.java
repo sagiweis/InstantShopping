@@ -21,8 +21,8 @@ import com.dys.instantshopping.adapters.FacebookFriendPickerAdapter;
 import com.dys.instantshopping.models.FacebookFriendPickerModel;
 import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.serverapi.GroupController;
-import com.dys.instantshopping.tasks.CreateGroupTask;
 import com.dys.instantshopping.utilities.AppCache;
+import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ImageParser;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -46,8 +47,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -55,6 +61,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
     private int PICK_IMAGE_REQUEST = 1;
     ArrayList<FacebookFriendPickerModel> friends = new ArrayList<FacebookFriendPickerModel>();
+    Group newGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,38 +71,45 @@ public class NewGroupActivity extends AppCompatActivity {
         populateFacebookFriendsList();
     }
 
-    private void sendGroupToServer(Group group){
-        (new CreateGroupTask()).execute();
-    }
-
     public void createGroup(View view){
         String name = ((EditText)findViewById(R.id.newGroupName)).getText().toString();
-        Bitmap picture = ((BitmapDrawable)((ImageView)findViewById(R.id.groupPictureButton)).getDrawable()).getBitmap();
+        Bitmap originalPicture = ((BitmapDrawable)((ImageView)findViewById(R.id.groupPictureButton)).getDrawable()).getBitmap();
+        Bitmap picture = Bitmap.createScaledBitmap(originalPicture,400,400,false);
         String pictureBase64 = ImageParser.bitmapToBase64(picture);
 
-        //String pictureBase64 = "";
         List<String> participants = new ArrayList<String>();
+        participants.add(AccessToken.getCurrentAccessToken().getUserId());
+
         for (FacebookFriendPickerModel currFriend : friends) {
             if(currFriend.isSelected())
                 participants.add(currFriend.getId());
         }
 
         if(name != ""){
-            Group newGroup = new Group(name, pictureBase64, participants);
-            //sendGroupToServer(newGroup);
-            ArrayList<Group> myGroups = (ArrayList<Group>)AppCache.get("myGroups");
-            myGroups.add(newGroup);
-            AppCache.put("myGroups", myGroups);
+            AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
+            Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
 
-            /*Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.0.104:31427/")
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(p.getProperty("ServerApiUrl"))
                     .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()))
                     .build();
             GroupController groupApi = retrofit.create(GroupController.class);
-            groupApi.AddGroup(newGroup.getName(),newGroup.getImageURL(),newGroup.getParticipents());*/
+            newGroup = new Group(name, pictureBase64, participants);
+            Call<ResponseBody> call = groupApi.AddGroup(newGroup);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Intent myIntent = new Intent(NewGroupActivity.this, MyGroups.class);
+                    startActivity(myIntent);
+                }
 
-            Intent myIntent = new Intent(NewGroupActivity.this, MyGroups.class);
-            startActivity(myIntent);
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "ארעה שגיאה ביצירת הקבוצה", Toast.LENGTH_LONG).show();
+                }
+            });
+    } else{
+            Toast.makeText(this, "יש להזין שם קבוצה", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -107,7 +121,6 @@ public class NewGroupActivity extends AppCompatActivity {
     }
 
     private void populateFacebookFriendsList(){
-
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me/friends",
@@ -135,14 +148,14 @@ public class NewGroupActivity extends AppCompatActivity {
                                                     FacebookFriendPickerModel model = new FacebookFriendPickerModel(friendId,friendName,imageURL);
                                                     friends.add(model);
                                                 }catch (JSONException e){
-
+                                                    Toast.makeText(getApplicationContext(), "ארעה שגיאה בקבלת רשימת החברים מפייסבוק", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }
                                 ).executeAsync();
                             }
                         } catch (JSONException e){
-
+                            Toast.makeText(getApplicationContext(), "ארעה שגיאה בקבלת רשימת החברים מפייסבוק", Toast.LENGTH_SHORT).show();
                         }
 
                         Collections.sort(friends);

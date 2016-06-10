@@ -40,6 +40,11 @@ public class FacebookFriendPickerAdapter extends ArrayAdapter<FacebookFriendPick
     }
 
     @Override
+public int getCount(){
+        return list.size();
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;
         if (convertView == null) {

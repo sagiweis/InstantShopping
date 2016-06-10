@@ -8,25 +8,35 @@ import java.util.Comparator;
  * Created by Dor Albagly on 5/9/2016.
  */
 public class Market {
-    private Location location;
-    private String name;
-    //TODO: adds order list or parameter or something
 
+    private String _id;
+    private String Name;
+    private double Latitude;
+    private double Longitude;
 
-    public Market(Location location, String name) {
-        this.location = location;
-        this.name = name;
+    public Market(String name, double latitude, double longitude)
+    {
+        this.Name = name;
+        this.Latitude = latitude;
+        this.Longitude = longitude;
     }
 
-    public Location getLocation() {
-        return location;
+    public double getLatitude() {
+        return this.Latitude;
     }
 
-    public Float getDistance(Location CurrentLocation) {
-        return location.distanceTo(CurrentLocation);
+    public double getLongitude() {
+        return this.Longitude;
+    }
+
+    public float getDistance(Location CurrentLocation) {
+        Location location = new Location("MarketLocation");
+        location.setLatitude(this.Latitude);
+        location.setLongitude(this.Longitude);
+        return ((int)location.distanceTo(CurrentLocation) / 1000);
     }
 
     public String getName() {
-        return name;
+        return this.Name;
     }
 }

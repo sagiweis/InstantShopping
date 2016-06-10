@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,35 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dys.instantshopping.GroupActivity;
 import com.dys.instantshopping.R;
 import com.dys.instantshopping.adapters.GroupListAdapter;
+import com.dys.instantshopping.adapters.ImageLabelAdapter;
+import com.dys.instantshopping.objects.Category;
+import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.objects.Product;
+import com.dys.instantshopping.serverapi.CategoriesController;
+import com.dys.instantshopping.serverapi.GroupController;
+import com.dys.instantshopping.utilities.AppCache;
+import com.dys.instantshopping.utilities.AssetsPropertyReader;
+import com.facebook.AccessToken;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Sagi on 04/05/2016.
@@ -42,7 +63,81 @@ public class AddEditProductFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = getActivity().getLayoutInflater().inflate(R.layout.add_product_dialog, null);
 
-        Spinner categorySpinner = (Spinner) view.findViewById(R.id.addProductCategorySpinner);
+        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(getActivity());
+        Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(p.getProperty("ServerApiUrl")).addConverterFactory(GsonConverterFactory.create()).build();
+        CategoriesController categoriesApi = retrofit.create(CategoriesController.class);
+        Call<List<Category>> call = categoriesApi.GetCategories();
+        call.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                final List<Category> allCategories = response.body();
+
+                ArrayList<String> categoriesNames = new ArrayList<String>();
+                for(int i=0;i<allCategories.size();i++){
+                    categoriesNames.add(allCategories.get(i).getName());
+                }
+
+                Spinner categorySpinner = (Spinner) view.findViewById(R.id.addProductCategorySpinner);
+                ArrayAdapter<String> categorySpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categoriesNames);
+                categorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                categorySpinner.setAdapter(categorySpinnerArrayAdapter);
+
+                Spinner productSpinner = (Spinner) view.findViewById(R.id.addProductSpinner);
+                ArrayAdapter<String> productSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, new ArrayList<String>());
+                productSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                productSpinner.setAdapter(productSpinnerArrayAdapter);
+
+                if(index > -1){
+                    ListView listView = (ListView) getActivity().findViewById(R.id.groupListView);
+                    GroupListAdapter listAdapter = ((GroupListAdapter) listView.getAdapter());
+                    Product productToEdit = listAdapter.getShoppingList().getProductsList().get(index);
+
+                    categorySpinner.setSelection(0);
+                    productSpinner.setSelection(((ArrayAdapter)productSpinner.getAdapter()).getPosition(productToEdit.getName()));
+
+                    TextView description = (TextView) view.findViewById(R.id.addProductDescriptionText);
+                    description.setText(productToEdit.getDescription());
+
+                    TextView amount = (TextView) view.findViewById(R.id.addProductAmount);
+                    amount.setText(String.valueOf(productToEdit.getAmount()));
+                }
+
+                categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        Spinner productSpinner = (Spinner) view.findViewById(R.id.addProductSpinner);
+                        productSpinner.setClickable(true);
+                        ((ArrayAdapter)productSpinner.getAdapter()).clear();
+                        ((ArrayAdapter)productSpinner.getAdapter()).addAll(allCategories.get(position).getProducts());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable throwable) {
+                Toast.makeText(getActivity().getApplicationContext(), "ארעה שגיאה בקבלת רשימת הקטגוריות", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*Spinner categorySpinner = (Spinner) view.findViewById(R.id.addProductCategorySpinner);
         ArrayList<String> categories = new ArrayList<String>();
         categories.add("חלב וביצים");
         categories.add("פירות וירקות");
@@ -62,75 +157,8 @@ public class AddEditProductFragment extends DialogFragment {
 
         ArrayAdapter<String> categorySpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories);
         categorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(categorySpinnerArrayAdapter);
+        categorySpinner.setAdapter(categorySpinnerArrayAdapter);*/
 
-        Spinner productSpinner = (Spinner) view.findViewById(R.id.addProductSpinner);
-        ArrayAdapter<String> productSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, new ArrayList<String>());
-        productSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        productSpinner.setAdapter(productSpinnerArrayAdapter);
-
-        if(index > -1){
-            ListView listView = (ListView) getActivity().findViewById(R.id.groupListView);
-            GroupListAdapter listAdapter = ((GroupListAdapter) listView.getAdapter());
-            Product productToEdit = listAdapter.getShoppingList().getProductsList().get(index);
-
-            categorySpinner.setSelection(0);
-            productSpinner.setSelection(((ArrayAdapter)productSpinner.getAdapter()).getPosition(productToEdit.getName()));
-
-            TextView description = (TextView) view.findViewById(R.id.addProductDescriptionText);
-            description.setText(productToEdit.getDescription());
-
-            TextView amount = (TextView) view.findViewById(R.id.addProductAmount);
-            amount.setText(String.valueOf(productToEdit.getAmount()));
-        }
-
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
-                Spinner productSpinner = (Spinner) view.findViewById(R.id.addProductSpinner);
-                productSpinner.setClickable(true);
-
-                ArrayList<String> products = new ArrayList<String>();
-                if (position == 0) {
-                    products.add("חלב");
-                    products.add("שוקו");
-                    products.add("גבינה לבנה");
-                    products.add("קוטג");
-                    products.add("יוגורט");
-                    products.add("גבינה צהובה");
-                    products.add("גבינה צפתית");
-                    products.add("ביצים");
-                } else if (position == 1) {
-                    products.add("אבוקדו");
-                    products.add("אשכולית");
-                    products.add("בננה");
-                    products.add("דובדבן");
-                    products.add("פאפיה");
-                    products.add("פומלית");
-                    products.add("קלמנטינה");
-                    products.add("תפוח עץ");
-                    products.add("פטריות");
-                    products.add("כוסברה");
-                    products.add("מלפפון");
-                    products.add("עגבנייה");
-                    products.add("חסה");
-                } else if (position == 2) {
-                    products.add("פילה סלמון");
-                    products.add("חזה עוף");
-                    products.add("קבב בקר");
-                    products.add("נקניק");
-                    products.add("נקניקיות");
-                    products.add("בשר הודו טחון");
-                }
-                ((ArrayAdapter)productSpinner.getAdapter()).clear();
-                ((ArrayAdapter)productSpinner.getAdapter()).addAll(products);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
         builder.setView(view);
         if(index > -1)
             builder.setTitle("ערוך פריט");

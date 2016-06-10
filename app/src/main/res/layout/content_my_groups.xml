@@ -4,13 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.dys.instantshopping.MyGroups"
-    tools:showIn="@layout/activity_my_groups">
+    tools:showIn="@layout/activity_my_groups"
+    android:padding="0sp">
 
     <GridView
         android:layout_width="fill_parent"
@@ -18,6 +15,6 @@
         android:id="@+id/groupsGridView"
         android:layout_alignParentTop="true"
         android:numColumns="2"
-        android:verticalSpacing="10sp"
-        android:horizontalSpacing="10sp" />
+        android:layout_centerHorizontal="true"
+        android:stretchMode="columnWidth" />
 </RelativeLayout>

@@ -32,20 +32,31 @@ import com.dys.instantshopping.GroupActivity;
 import com.dys.instantshopping.R;
 import com.dys.instantshopping.adapters.GroupListAdapter;
 import com.dys.instantshopping.adapters.MarketSpinnerAdapter;
+import com.dys.instantshopping.objects.Category;
 import com.dys.instantshopping.objects.Market;
+import com.dys.instantshopping.serverapi.CategoriesController;
+import com.dys.instantshopping.serverapi.MarketsController;
 import com.dys.instantshopping.utilities.AppCache;
+import com.dys.instantshopping.utilities.AssetsPropertyReader;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Dor Albagly on 5/9/2016.
  */
 public class ChooseMarketDialogFragment extends DialogFragment {
-
-    ArrayList<Market> mlist;
+    View view;
+    List<Market> mlist;
     public void onAttach(Activity activity) {
         super.onAttach(activity);
     }
@@ -57,38 +68,34 @@ public class ChooseMarketDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate the layout for this fragment
         //View view = inflater.inflate(R.layout.content_group_list, container, false);
+        view = inflater.inflate(R.layout.choose_market_dialog, null);
+
         final Activity context = getActivity();
 
-        Location l = new Location("MyLocation");
-        l.setLatitude(32.033470);
-        l.setLongitude(34.881564);
-
-        Location l1 = new Location("שופרסל"); l1.setLatitude(32.030124); l1.setLongitude(34.878045);
-        Location l2 = new Location("חצי חינם"); l2.setLatitude(32.003929); l2.setLongitude( 34.803373);
-        ArrayList<Market> list = new ArrayList<Market>();
-        list.add(new Market(l1, "שופרסל"));
-        list.add(new Market(l2, "חצי חינם"));
-        mlist = list;
-        Collections.sort(mlist, new MarketDistanceComparator(l));
-        View view = inflater.inflate(R.layout.choose_market_dialog, null);
-        Spinner spinner = (Spinner) view.findViewById(R.id.marketSpinner);
-        spinner.setAdapter(new MarketSpinnerAdapter(context, R.id.marketSpinner, list, l));
-        /*spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(getActivity());
+        Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(p.getProperty("ServerApiUrl")).addConverterFactory(GsonConverterFactory.create()).build();
+        MarketsController marketsApi = retrofit.create(MarketsController.class);
+        Call<List<Market>> call = marketsApi.GetMarkets();
+        call.enqueue(new Callback<List<Market>>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                chosenMarket = mlist.get(position);
-                ChooseMarketDialogListener activity = (ChooseMarketDialogListener) getActivity();
-                activity.onFinishChooseMarketDialog(chosenMarket);
-                dismiss();
-
+            public void onResponse(Call<List<Market>> call, Response<List<Market>> response) {
+                mlist = response.body();
+                Location l = new Location("MyLocation");
+                l.setLatitude(32.033470);
+                l.setLongitude(34.881564);
+                Collections.sort(mlist, new MarketDistanceComparator(l));
+                Spinner spinner = (Spinner) view.findViewById(R.id.marketSpinner);
+                spinner.setAdapter(new MarketSpinnerAdapter(context, R.id.marketSpinner, mlist, l));
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onFailure(Call<List<Market>> call, Throwable throwable) {
+                Toast.makeText(getActivity().getApplicationContext(), "ארעה שגיאה בקבלת רשימת הסופרמרקטים", Toast.LENGTH_LONG).show();
             }
-        });*/
+        });
+
+
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)

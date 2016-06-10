@@ -4,9 +4,13 @@ import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -22,19 +26,24 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dys.instantshopping.fragments.AboutFragment;
 import com.dys.instantshopping.fragments.ChooseMarketDialogFragment;
 import com.dys.instantshopping.fragments.AddEditProductFragment;
 import com.dys.instantshopping.fragments.ChooseMarketDialogFragment;
 import com.dys.instantshopping.fragments.GroupListFragment;
+import com.dys.instantshopping.fragments.GroupSettingsFragment;
 import com.dys.instantshopping.fragments.ListsHistoryFragment;
 import com.dys.instantshopping.fragments.ShoppingListFragment;
 import com.dys.instantshopping.fragments.ListsHistoryFragment;
 import com.dys.instantshopping.fragments.ShoppingListFragment;
 import com.dys.instantshopping.objects.Market;
 import com.dys.instantshopping.objects.ShoppingList;
+import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ImageDownloader;
 import com.dys.instantshopping.utilities.ImageParser;
 import com.facebook.AccessToken;
@@ -44,10 +53,19 @@ import com.facebook.HttpMethod;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class GroupActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Group currentGroup;
+    private int PICK_IMAGE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +202,10 @@ public class GroupActivity extends AppCompatActivity
             new ChooseMarketDialogFragment().show(getSupportFragmentManager(), "בחר סופר");
         }else if(id == R.id.nav_group_list){
             setFragment(new GroupListFragment());
+        }else if(id == R.id.nav_about){
+            setFragment(new AboutFragment());
+        }else if(id == R.id.nav__group_settings){
+            setFragment(new GroupSettingsFragment());
         }
 
        /* if (id == R.id.nav_camera) {
@@ -211,5 +233,54 @@ public class GroupActivity extends AppCompatActivity
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
+    }
+    public void setGroupPicture(View view){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "בחר תמונה לקבוצה"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                ImageView imageView = (ImageView)findViewById(R.id.editGroupPictureButton);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /***
+     * Close the shopping list and move it to the history
+     * @param view
+     */
+    public void finishPurchase(View view){
+        Group currentGroup = (Group) AppCache.get("currentGroup");
+        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
+        Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(p.getProperty("ServerApiUrl"))
+                .build();
+        GroupController groupApi = retrofit.create(GroupController.class);
+        Call<Group> call = groupApi.MoveListToHistory(currentGroup.getId());
+        call.enqueue(new Callback<Group>() {
+            @Override
+            public void onResponse(Call<Group> call, Response<Group> response) {
+                Group updatedGroup = response.body();
+                AppCache.put("currentGroup",updatedGroup);
+                setFragment(new GroupListFragment());
+            }
+
+            @Override
+            public void onFailure(Call<Group> call, Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "ארעה שגיאה בסגירת הרשימה", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
