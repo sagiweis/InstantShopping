@@ -61,14 +61,14 @@ public class ShoppingListAdapter extends BaseAdapter{
         expandedListTextView3.setText(String.valueOf(expandedListText.getAmount()));
 
         LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.slistrow);
-        layout.setOnClickListener(new View.OnClickListener() {
+        /*layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 expandedListText.toggleSelected();
                 CheckBox c=(CheckBox)v.findViewById(R.id.checkBox);
                 c.setChecked(expandedListText.isSelected());
             }
-        });
+        });*/
         return convertView;
     }
 }

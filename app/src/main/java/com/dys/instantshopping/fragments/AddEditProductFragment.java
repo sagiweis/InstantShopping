@@ -31,13 +31,17 @@ import com.dys.instantshopping.serverapi.CategoriesController;
 import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.AssetsPropertyReader;
+import com.dys.instantshopping.utilities.ObjectIdTypeAdapter;
 import com.facebook.AccessToken;
 import com.google.gson.GsonBuilder;
+
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,14 +69,16 @@ public class AddEditProductFragment extends DialogFragment {
 
         AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(getActivity());
         Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(p.getProperty("ServerApiUrl")).addConverterFactory(GsonConverterFactory.create()).build();
-        CategoriesController categoriesApi = retrofit.create(CategoriesController.class);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(p.getProperty("ServerApiUrl"))
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create()))
+                .build();        CategoriesController categoriesApi = retrofit.create(CategoriesController.class);
         Call<List<Category>> call = categoriesApi.GetCategories();
         call.enqueue(new Callback<List<Category>>() {
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
                 final List<Category> allCategories = response.body();
-
+                AppCache.put("categories",allCategories);
                 ArrayList<String> categoriesNames = new ArrayList<String>();
                 for(int i=0;i<allCategories.size();i++){
                     categoriesNames.add(allCategories.get(i).getName());
@@ -124,41 +130,6 @@ public class AddEditProductFragment extends DialogFragment {
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*Spinner categorySpinner = (Spinner) view.findViewById(R.id.addProductCategorySpinner);
-        ArrayList<String> categories = new ArrayList<String>();
-        categories.add("חלב וביצים");
-        categories.add("פירות וירקות");
-        categories.add("בשר / עוף ודגים");
-        categories.add("לחם ומוצרי מאפה");
-        categories.add("משקאות ויין");
-        categories.add("קפואים");
-        categories.add("סלטים ונקניקים");
-        categories.add("בריאות ואורגני");
-        categories.add("פארם ותינוקות");
-        categories.add("ניקיון ובעלי חיים");
-        categories.add("חשמל ואלקטרוניקה");
-        categories.add("ריהוט לבית ולגן");
-        categories.add("כלי בית וחד פעמי");
-        categories.add("טקסטיל לבית והלבשה");
-        categories.add("מחנאות פנאי ונסיעות");
-
-        ArrayAdapter<String> categorySpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories);
-        categorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(categorySpinnerArrayAdapter);*/
-
         builder.setView(view);
         if(index > -1)
             builder.setTitle("ערוך פריט");
@@ -173,7 +144,7 @@ public class AddEditProductFragment extends DialogFragment {
                         String name = spinner.getSelectedItem().toString();
 
                         ListView listView = (ListView) getActivity().findViewById(R.id.groupListView);
-                        GroupListAdapter listAdapter = ((GroupListAdapter) listView.getAdapter());
+                        final GroupListAdapter listAdapter = ((GroupListAdapter) listView.getAdapter());
 
                         double amountAsDouble = 1.0;
                         if (amount.compareTo("") != 0)
@@ -190,7 +161,41 @@ public class AddEditProductFragment extends DialogFragment {
                             listAdapter.getShoppingList().addProduct(new Product(name, description, amountAsDouble));
 
                         }
-                        listAdapter.notifyDataSetChanged();
+
+                        final Activity activity = getActivity();
+                        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(getActivity());
+                        Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(p.getProperty("ServerApiUrl"))
+                                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create()))
+                                .build();
+                        final GroupController groupApi = retrofit.create(GroupController.class);
+                        Group currentGroup = (Group) AppCache.get("currentGroup");
+                        Call<Group> call = groupApi.GetGroupById(currentGroup.getId().toString());
+                        call.enqueue(new Callback<Group>() {
+                            @Override
+                            public void onResponse(Call<Group> call, Response<Group> response) {
+                                final Group newGroup = response.body();
+                                newGroup.setCurrentList(listAdapter.getShoppingList());
+                                Call<Void> updateCall = groupApi.UpdateGroup(newGroup);
+                                updateCall.enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        AppCache.put("currentGroup",newGroup);
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable throwable) {
+                                        Toast.makeText(getActivity().getApplicationContext(), "ארעה שגיאה בשמירת הקבוצה", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onFailure(Call<Group> call, Throwable throwable) {
+                                Toast.makeText(getActivity().getApplicationContext(), "ארעה שגיאה בקבלת הקבוצה מהשרת", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 }
         );

@@ -1,19 +1,19 @@
 package com.dys.instantshopping.objects;
 
+import java.util.List;
+
 /**
  * Created by Sagi on 08/06/2016.
  */
-public class ProductOrder {
-    public String _id;
+public class ProductOrderReport {
     public String MarketId;
-    public String CategoryBefore;
+    public List<String> CategoryBefore;
     public String CategoryAfter;
-    public int Count;
 
-    public ProductOrder(String marketId, String before, String after)
+    public ProductOrderReport(String marketId, List<String> before, String after)
     {
+        this.MarketId = marketId;
         this.CategoryBefore = before;
         this.CategoryAfter = after;
-        this.Count = 0;
     }
 }

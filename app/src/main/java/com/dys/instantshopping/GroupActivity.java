@@ -35,9 +35,11 @@ import com.dys.instantshopping.fragments.ChooseMarketDialogFragment;
 import com.dys.instantshopping.fragments.GroupListFragment;
 import com.dys.instantshopping.fragments.GroupSettingsFragment;
 import com.dys.instantshopping.fragments.ListsHistoryFragment;
+import com.dys.instantshopping.fragments.RecommendationsFragment;
 import com.dys.instantshopping.fragments.ShoppingListFragment;
 import com.dys.instantshopping.fragments.ListsHistoryFragment;
 import com.dys.instantshopping.fragments.ShoppingListFragment;
+import com.dys.instantshopping.objects.HistoryShoppingList;
 import com.dys.instantshopping.objects.Market;
 import com.dys.instantshopping.objects.ShoppingList;
 import com.dys.instantshopping.serverapi.GroupController;
@@ -46,11 +48,14 @@ import com.dys.instantshopping.objects.Group;
 import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ImageDownloader;
 import com.dys.instantshopping.utilities.ImageParser;
+import com.dys.instantshopping.utilities.ObjectIdTypeAdapter;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.google.gson.GsonBuilder;
 
+import org.bson.types.ObjectId;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -60,6 +65,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GroupActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -206,21 +212,9 @@ public class GroupActivity extends AppCompatActivity
             setFragment(new AboutFragment());
         }else if(id == R.id.nav__group_settings){
             setFragment(new GroupSettingsFragment());
+        }else if(id == R.id.nav_recommendations){
+            setFragment(new RecommendationsFragment());
         }
-
-       /* if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -261,24 +255,27 @@ public class GroupActivity extends AppCompatActivity
      * @param view
      */
     public void finishPurchase(View view){
-        Group currentGroup = (Group) AppCache.get("currentGroup");
+        final Group currentGroup = (Group) AppCache.get("currentGroup");
+        HistoryShoppingList historyList = new HistoryShoppingList(currentGroup.getCurrentList());
+        currentGroup.setCurrentList(new ShoppingList());
+        currentGroup.getHistoryLists().add(historyList);
         AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
         Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(p.getProperty("ServerApiUrl"))
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create()))
                 .build();
         GroupController groupApi = retrofit.create(GroupController.class);
-        Call<Group> call = groupApi.MoveListToHistory(currentGroup.getId());
-        call.enqueue(new Callback<Group>() {
+        Call<Void> call = groupApi.UpdateGroup(currentGroup);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Group> call, Response<Group> response) {
-                Group updatedGroup = response.body();
-                AppCache.put("currentGroup",updatedGroup);
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                AppCache.put("currentGroup",currentGroup);
                 setFragment(new GroupListFragment());
             }
 
             @Override
-            public void onFailure(Call<Group> call, Throwable throwable) {
+            public void onFailure(Call<Void> call, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "ארעה שגיאה בסגירת הרשימה", Toast.LENGTH_LONG).show();
             }
         });

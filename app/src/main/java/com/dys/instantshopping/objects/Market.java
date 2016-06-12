@@ -39,4 +39,8 @@ public class Market {
     public String getName() {
         return this.Name;
     }
+
+    public String getId(){
+        return this._id;
+    }
 }

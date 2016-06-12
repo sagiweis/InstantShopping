@@ -1,6 +1,7 @@
 package com.dys.instantshopping.serverapi;
 
 import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.objects.ShoppingList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,12 @@ public interface GroupController {
     @POST("group/addgroup")
     Call<ResponseBody> AddGroup(@Body Group group);
 
+    @POST("group/UpdateGroup")
+    Call<Void> UpdateGroup(@Body Group group);
+
+    @GET("group/getgroupbyid")
+    Call<Group> GetGroupById(@Query("groupId") String groupId);
+
     @GET("group/getmygroups")
     Call<ArrayList<Group>> GetMyGroups(@Query("userId") String userId);
-
-    @GET("group/MoveListToHistory")
-    Call<Group> MoveListToHistory(@Query("objectId") String objectId);
 }

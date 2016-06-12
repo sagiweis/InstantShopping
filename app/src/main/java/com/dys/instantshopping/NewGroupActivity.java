@@ -24,12 +24,14 @@ import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ImageParser;
+import com.dys.instantshopping.utilities.ObjectIdTypeAdapter;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.google.gson.GsonBuilder;
 
+import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,7 +93,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(p.getProperty("ServerApiUrl"))
-                    .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()))
+                    .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter()).create()))
                     .build();
             GroupController groupApi = retrofit.create(GroupController.class);
             newGroup = new Group(name, pictureBase64, participants);

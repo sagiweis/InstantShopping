@@ -9,12 +9,14 @@
         android:layout_height="462dp"
         android:id="@+id/slistView"
         android:gravity="right"
+        android:clickable="true"
         android:layout_weight="0.66" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="סיימתי"
+android:onClick="finishPurchase"
         android:id="@+id/button2"
         android:layout_gravity="bottom|center_horizontal" />
 </LinearLayout>
