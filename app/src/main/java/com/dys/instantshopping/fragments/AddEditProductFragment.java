@@ -32,7 +32,6 @@ import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ObjectIdTypeAdapter;
-import com.facebook.AccessToken;
 import com.google.gson.GsonBuilder;
 
 import org.bson.types.ObjectId;
@@ -99,7 +98,16 @@ public class AddEditProductFragment extends DialogFragment {
                     GroupListAdapter listAdapter = ((GroupListAdapter) listView.getAdapter());
                     Product productToEdit = listAdapter.getShoppingList().getProductsList().get(index);
 
-                    categorySpinner.setSelection(0);
+                    // get relevant category
+                    for(int categoryIndex=0;categoryIndex < allCategories.size();categoryIndex++){
+                        if(allCategories.get(categoryIndex).getProducts().contains((productToEdit.getName()))) {
+                            categorySpinner.setSelection(categoryIndex);
+                            ((ArrayAdapter)productSpinner.getAdapter()).clear();
+                            ((ArrayAdapter)productSpinner.getAdapter()).addAll(allCategories.get(categoryIndex).getProducts());
+                        }
+                    }
+
+
                     productSpinner.setSelection(((ArrayAdapter)productSpinner.getAdapter()).getPosition(productToEdit.getName()));
 
                     TextView description = (TextView) view.findViewById(R.id.addProductDescriptionText);
