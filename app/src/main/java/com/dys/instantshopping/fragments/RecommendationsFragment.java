@@ -10,7 +10,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dys.instantshopping.R;
+import com.dys.instantshopping.adapters.RecommendationsListAdapter;
 import com.dys.instantshopping.objects.Group;
+import com.dys.instantshopping.objects.Product;
+import com.dys.instantshopping.objects.Recommendation;
 import com.dys.instantshopping.serverapi.GroupController;
 import com.dys.instantshopping.serverapi.RecommendationsController;
 import com.dys.instantshopping.utilities.AppCache;
@@ -41,20 +44,29 @@ public class RecommendationsFragment extends Fragment {
         Properties p = assetsPropertyReader.getProperties("InstantShoppingConfig.properties");
         Retrofit retrofit = new Retrofit.Builder().baseUrl(p.getProperty("ServerApiUrl")).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().create())).build();
         final RecommendationsController recommendationsApi = retrofit.create(RecommendationsController.class);
-        Group currentGroup = (Group) AppCache.get("currentGroup");
+        final Group currentGroup = (Group) AppCache.get("currentGroup");
 
         Call<Map<String, Double>> call = recommendationsApi.GetRecommendations(currentGroup.getId().toString());
         call.enqueue(new Callback<Map<String, Double>>() {
             @Override
             public void onResponse(Call<Map<String, Double>> call, Response<Map<String, Double>> response) {
                 Map<String, Double> recommendations = response.body();
-                List<String> texts = new ArrayList<String>();
+                List<Recommendation> rec = new ArrayList<Recommendation>();
                 for ( String key : recommendations.keySet() ) {
                     double value = recommendations.get(key);
-                    texts.add(String.valueOf(value) + " " + key);
+
+                    for(Product currProduct:currentGroup.getCurrentList().getProductsList())
+                    {
+                        if(currProduct.getName().equals(key)){
+                            value -= currProduct.getAmount();
+                        }
+                    }
+
+                    if(value > 0)
+                        rec.add(new Recommendation(key,value));
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,texts);
+                RecommendationsListAdapter adapter = new RecommendationsListAdapter(getActivity(),rec);
                 ListView listView = (ListView)fragmentView.findViewById(R.id.recommendationsListView);
                 listView.setAdapter(adapter);
             }

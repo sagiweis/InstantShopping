@@ -32,7 +32,6 @@ import com.dys.instantshopping.serverapi.SuperMarketsOrderController;
 import com.dys.instantshopping.utilities.AppCache;
 import com.dys.instantshopping.utilities.AssetsPropertyReader;
 import com.dys.instantshopping.utilities.ObjectIdTypeAdapter;
-import com.facebook.AccessToken;
 import com.google.gson.GsonBuilder;
 
 import org.bson.types.ObjectId;

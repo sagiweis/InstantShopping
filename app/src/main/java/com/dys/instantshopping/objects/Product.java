@@ -31,6 +31,8 @@ public class Product {
         return this.Amount;
     }
 
+    public void setAmount(double amount){this.Amount = amount;}
+
     public String getDescription(){
         return this.Description;
     }
